@@ -1,10 +1,18 @@
 .container {
   display: grid;
-  grid-template-columns: 2rem 2rem;
+  grid-template-columns: 30px 30px 30px 30px;
+  grid-template-rows: 30px 30px 30px 30px;
+  grid-auto-flow: row;
+  justify-content: center;
+  max-width: 600px;
+  max-height: 600px;
+
 }
 
 .square {
-  
+  background-color: black;
+  border: solid 1px #fff;
+  box-sizing: border-box
 }
 
 .App {

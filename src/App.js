@@ -1,4 +1,6 @@
-const board = (props) => {
+import './App.css'
+
+const Board = (props) => {
   return (
     <div className="container">
       <div className="square"></div>
