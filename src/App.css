@@ -1,15 +1,38 @@
-* {
-  box-sizing: border-box;
+body {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  margin: 0;
 }
+
+
+.header-container {
+  display: flex;
+  background-color: yellow;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid black;
+  padding: 5px
+}
+
+.title {
+  font-size: 3rem;
+}
+
+.score {
+  font-size: 1rem;
+}
+
 .container {
   display: grid;
   grid-template-columns: 25px repeat(auto-fill, 25px);
   place-items: center;
   max-width: 500px;
-
 }
 
 .square {
+  display: flex;
   background-color: black;
   border: solid 1px #fff;
   width: 25px;

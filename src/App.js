@@ -1,5 +1,14 @@
 import './App.css'
 
+const Header = (props) => {
+    return (
+      <div className="header-container">
+        <div className='title'>SNAKE</div>
+        <div className='score'>Score</div>
+      </div>
+    )
+}
+
 const Square = (props) => {
   // const classes = `square-color-${color}`
   return <div className="square"></div>
@@ -22,7 +31,8 @@ const Board = (props) => {
 
 function App() {
   return (
-    <div className="App">
+    <div className="box">
+      <Header></Header>
       <Board></Board>
     </div>
   );
