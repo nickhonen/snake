@@ -1,4 +1,7 @@
 import './App.css'
+import useKeypress from 'react-use-keypress';
+
+const Snake = (props)
 
 const Header = (props) => {
     return (
@@ -11,6 +14,7 @@ const Header = (props) => {
 
 const Square = (props) => {
   // const classes = `square-color-${color}`
+
   return <div className="square"></div>
 }
 
@@ -30,6 +34,8 @@ const Board = (props) => {
 }
 
 function App() {
+
+  const [cellState, setCellState] 
   return (
     <div className="box">
       <Header></Header>
