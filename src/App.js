@@ -28,53 +28,60 @@ function App() {
   const [snakePosition, setSnakePosition] = useState([[getRandomInt(cols), getRandomInt(rows)]])
   const [direction, setDirection] = useState([0, 0])
   const [grid, setGrid] = useState(createBoard())
-
-
+  
+  useEffect(() => {
+    moveSnake(300)
+    document.onkeydown = changeDirections
+  }, [])
 
   // use useEffect hook for the start game button, generate some food and the snake 
   useEffect(() => {
-    let newGrid = grid;
+    let newGrid = createBoard();
     snakePosition.forEach(([x, y]) => newGrid[x][y] = "snake")
     setGrid(newGrid)
-  }, [grid, snakePosition])
+  }, [snakePosition])
 
 
-  const moveSnake = () => {
-    let snakeCopy = snakePosition
-    let [dx, dy] = direction
-    let [x, y] = snakeCopy[snakeCopy.length - 1]
-    let newHead = [dx + x, dy + y]
+  const moveSnake = (speed) => {
+    setTimeout(() => {
+      let [dx, dy] = direction
+      let [x, y] = snakePosition[0]
+      let newHead = [dx + x, dy + y]
 
-    snakeCopy.push(newHead)
-    snakeCopy.shift()
-    console.log(snakeCopy)
-    setSnakePosition(snakeCopy)
+      const snakeCopy = snakePosition.slice(0, snakePosition.length - 1);
+      console.log(snakeCopy)
+      setSnakePosition([newHead, ...snakeCopy]
+    }, speed)
   }
-  
+ 
 
-    useKeypress(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'], 
-      (event) => {
-        switch (event.key) {
-          case 'ArrowLeft':
-            setDirection([0, -1])
-            moveSnake()
-            break;
-          case 'ArrowRight':
-            setDirection([0, 1])
-            moveSnake()
-            break;
-          case 'ArrowUp':
-            setDirection([-1, 0])
-            break;
-          case 'ArrowDown':
-            setDirection([1, 0])
-            break;
-          default: 
-            return;
-        }
-      })
 
-  const squares = grid.map((x, i) => x.map((value, j) => <div key={`${i}${j}`} className={value}></div>));
+    const changeDirections = ({key}) => {
+        let d = direction
+          switch (key) {
+              case 'ArrowLeft':
+                d = [0, -1]
+                // setDirection([0, -1])
+                break;
+              case 'ArrowRight':
+                d = [0, 1]
+                // setDirection([0, 1])
+                break;
+              case 'ArrowUp':
+                d = [-1, 0]
+                // setDirection([-1, 0])
+                break;
+              case 'ArrowDown':
+                d = [1, 0]
+                // setDirection([1, 0])
+                break;
+              default: 
+                break;
+            }
+          setDirection(d)
+      }
+
+  const squares = () => grid.map((x, i) => x.map((value, j) => <div key={`${i}${j}`} className={value}></div>));
 
   return (
     <div>
@@ -82,7 +89,7 @@ function App() {
         <Header></Header>
       </div>
       <div className='container'>
-        {squares}
+        {squares()}
       </div>
       <button className='start-game' >Start</button>
     </div>
