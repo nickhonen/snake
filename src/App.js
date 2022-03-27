@@ -36,7 +36,7 @@ function App() {
     snakePosition.forEach(([x, y]) => newGrid[x][y] = "snake")
     setGrid(newGrid)
     
-  }, [])
+  }, [grid])
 
   // use useEffect hook for the start game button, generate some food and the snake 
   // useEffect(() => {
