@@ -25,53 +25,64 @@ function App() {
     return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
   }
   
-  const [snakePosition, setSnakePosition] = useState([[getRandomInt(cols), getRandomInt(rows)]])
-  const [direction, setDirection] = useState([0, 0])
+  const [snakePosition, setSnakePosition] = useState([[11, 11], [11, 12]])
+  const [direction, setDirection] = useState([0, 1])
   const [grid, setGrid] = useState(createBoard())
   
   useEffect(() => {
-    moveSnake(300)
-    document.onkeydown = changeDirections
-  }, [])
-
-  // use useEffect hook for the start game button, generate some food and the snake 
-  useEffect(() => {
+    // figure out how to actually use this hook to change position of snake ever 500 ms 
+    onkeydown = changeDirections
     let newGrid = createBoard();
     snakePosition.forEach(([x, y]) => newGrid[x][y] = "snake")
     setGrid(newGrid)
-  }, [snakePosition])
+    
+  }, [])
+
+  // use useEffect hook for the start game button, generate some food and the snake 
+  // useEffect(() => {
+  //   let newGrid = createBoard();
+  //   snakePosition.forEach(([x, y]) => newGrid[x][y] = "snake")
+  //   setGrid(newGrid)
+  // }, [snakePosition])
 
 
-  const moveSnake = (speed) => {
-    setTimeout(() => {
+  const moveSnake = () => {
+    // setTimeout(() => {
       let [dx, dy] = direction
       let [x, y] = snakePosition[0]
       let newHead = [dx + x, dy + y]
 
-      const snakeCopy = snakePosition.slice(0, snakePosition.length - 1);
+      let snakeCopy = snakePosition.slice(0, 0)
       console.log(snakeCopy)
-      setSnakePosition([newHead, ...snakeCopy]
-    }, speed)
+      snakeCopy.push(newHead)
+      console.log(newHead)
+      setSnakePosition(snakeCopy)
+      setInterval(moveSnake(), 1000)
+    // }, speed)
   }
  
 
 
-    const changeDirections = ({key}) => {
+    const changeDirections = (event) => {
         let d = direction
-          switch (key) {
+          switch (event.key) {
               case 'ArrowLeft':
                 d = [0, -1]
+                console.log('left pressed')
                 // setDirection([0, -1])
                 break;
               case 'ArrowRight':
                 d = [0, 1]
+                console.log('right pressed')
                 // setDirection([0, 1])
                 break;
               case 'ArrowUp':
+                console.log('up pressed')
                 d = [-1, 0]
                 // setDirection([-1, 0])
                 break;
               case 'ArrowDown':
+                console.log('down pressed')
                 d = [1, 0]
                 // setDirection([1, 0])
                 break;
