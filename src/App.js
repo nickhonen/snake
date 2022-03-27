@@ -24,21 +24,48 @@ function App() {
     return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
   }
   
-  const [snakePosition, setSnakePosition] = useState([[11, 11], [11, 12]])
-  const [direction, setDirection] = useState([0, 1])
+  const [snakePosition, setSnakePosition] = useState([[11, 11], [11, 12],])
+  const [direction, setDirection] = useState([0, 0])
   const [grid, setGrid] = useState(createBoard())
   
-
-
-
   useEffect(() => {
-    
-    setTimeout(() => moveSnake(snakePosition), 500)
+    changeGridTypes()
+    setTimeout(() => moveSnake(snakePosition), 1500)
+    console.log(snakePosition)
+    console.log(direction)
   }, [snakePosition])
 
   useEffect(() => {
-    document.addEventListener("onkeydown", changeDirections);
-  }, []);
+    const changeDirections = (event) => {
+      event = event || window.Event
+        switch (event.key) {
+          case 'ArrowLeft':
+            console.log('left pressed')
+            setDirection([0, -1])
+            break;
+          case 'ArrowRight':
+            console.log('right pressed')
+            setDirection([0, 1])
+            break;
+          case 'ArrowUp':
+            console.log('up pressed')
+            setDirection([-1, 0])
+            break;
+          case 'ArrowDown':
+            console.log('down pressed')
+            setDirection([1, 0])
+            break;
+          default: 
+            setDirection([1, 0])
+            break;
+        }
+      }
+    document.addEventListener("keydown", changeDirections);
+    //cleanup function
+    return () => {
+      document.removeEventListener('keydown', changeDirections)
+    }
+  }, [direction, setDirection]);
 
   const changeGridTypes = () => {
     let newGrid = createBoard();
@@ -48,17 +75,20 @@ function App() {
 
   const moveSnake = useCallback(
     (snakePosition) => {
+      let [dx, dy] = direction
       let snake = [...snakePosition]
       let newHead = snake[snake.length - 1]
 
       switch (direction) {
         // left
-        case [0, -1]:
+        case ([0, -1]):
           newHead = [newHead[0] - 1, newHead[1]]
+          console.log('moveSnake left')
           break;
         // right
         case [0, 1]:
           newHead = [newHead[0] + 1, newHead[1]]
+          console.log('moveSnake right')
           break;
         // up
         case [-1, 0]:
@@ -68,41 +98,15 @@ function App() {
         case [1, 0]:
           newHead = [newHead[0], newHead[1] + 1]
           break;
-
         default:
+          console.log('moveSnake default')
+          newHead = [newHead[0], newHead[1] + 1]
           break;
       }
-      snake.push(newHead)
-      snake.shift()
-      setSnakePosition([...snake])
+        snake.push(newHead)
+        snake.shift()
+        setSnakePosition(snake)  
     }, [direction])
- 
-
-
-    const changeDirections = useCallback(
-      (event) => {
-        event = event || window.event
-          switch (event.key) {
-            case 'ArrowLeft':
-              console.log('left pressed')
-              setDirection([0, -1])
-              break;
-            case 'ArrowRight':
-              console.log('right pressed')
-              setDirection([0, 1])
-              break;
-            case 'ArrowUp':
-              console.log('up pressed')
-              setDirection([-1, 0])
-              break;
-            case 'ArrowDown':
-              console.log('down pressed')
-              setDirection([1, 0])
-              break;
-            default: 
-              break;
-          }
-        }, [setDirection])
 
   const squares = () => grid.map((x, i) => x.map((value, j) => <div key={`${i}${j}`} className={value}></div>));
 
