@@ -2,84 +2,91 @@ import './App.css'
 import useKeypress from 'react-use-keypress';
 import { useState, useEffect } from 'react';
 
-const Snake = ({ onKeypress }) => {
-
-  let snakePosition = [[10, 11]];
-  let direction = [1, 0]
-  useKeypress(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'], 
-  (event) => {
-    switch (event.key) {
-      case 'ArrowLeft':
-        direction = [0, -1]
-        break;
-      case 'ArrowRight':
-        direction = [0, 1]
-        break;
-      case 'ArrowUp':
-        direction = [-1, 0]
-        break;
-      case 'ArrowDown':
-        direction = [1, 0]
-        break;
-      default: 
-        direction = [0, 0]
-        break;
-    }
-  })
-  
-}
+const rows = 20
+const cols = 20
 
 const Header = (props) => {
     return (
       <div className="header-container">
         <div className='title'>SNAKE</div>
-        <div className='score'>Score</div>
+        <div className='score'>Score: </div>
       </div>
     )
 }
 
+function App() {
+
+  const createBoard = () => [...Array(cols)].map((_) => [...Array(rows)].map((_) => "empty"));
 
 
-const Board = (props) => {
-  const gridSize = 20;
-  const grid = [...Array(gridSize)].map(() =>
-  [...Array(gridSize)].map((square, index) => <div key={index} className="square"></div>))
-  
-  // const grid = []
-  // for (let row = 0; row < 20; row++) {
-  //   grid.push([])
-  //   for (let col = 0; col < 20; col++) {
-  //     grid[row].push(<div key={Number(`${col}${row}`)} className="square"></div>)
-  //   }
-  // }
-
-  function getRandomInt(min, max) {
-    min = Math.ceil(min);
+  function getRandomInt(max) {
+    let min = 0;
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
   }
+  
+  const [snakePosition, setSnakePosition] = useState([[getRandomInt(cols), getRandomInt(rows)]])
+  const [direction, setDirection] = useState([0, 0])
+  const [grid, setGrid] = useState(createBoard())
 
-  // const generateFood = () => {
-  //   const rand =  getRandomInt(0, 100)
-  //   const replaceS
+
+
+  // use useEffect hook for the start game button, generate some food and the snake 
+  useEffect(() => {
+    let newGrid = grid;
+    snakePosition.forEach(([x, y]) => newGrid[x][y] = "snake")
+    setGrid(newGrid)
+  }, [grid, snakePosition])
+
+
+  const moveSnake = () => {
+    let snakeCopy = snakePosition
+    let [dx, dy] = direction
+    let [x, y] = snakeCopy[snakeCopy.length - 1]
+    let newHead = [dx + x, dy + y]
+
+    snakeCopy.push(newHead)
+    snakeCopy.shift()
+    console.log(snakeCopy)
+    setSnakePosition(snakeCopy)
+  }
+  
+
+    useKeypress(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'], 
+      (event) => {
+        switch (event.key) {
+          case 'ArrowLeft':
+            setDirection([0, -1])
+            moveSnake()
+            break;
+          case 'ArrowRight':
+            setDirection([0, 1])
+            moveSnake()
+            break;
+          case 'ArrowUp':
+            setDirection([-1, 0])
+            break;
+          case 'ArrowDown':
+            setDirection([1, 0])
+            break;
+          default: 
+            return;
+        }
+      })
+
+  const squares = grid.map((x, i) => x.map((value, j) => <div key={`${i}${j}`} className={value}></div>));
 
   return (
-    <div className="container">
-      {grid}
+    <div>
+      <div className="box">
+        <Header></Header>
+      </div>
+      <div className='container'>
+        {squares}
+      </div>
+      <button className='start-game' >Start</button>
     </div>
-  )
-}
 
-function App() {
-
-  const 
-
-
-  return (
-    <div className="box">
-      <Header></Header>
-      <Board></Board>
-    </div>
   );
 }
 

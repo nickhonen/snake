@@ -11,13 +11,14 @@ body {
   background-color: yellow;
   flex-direction: row;
   align-items: center;
-  justify-content: center;
+  justify-content: space-around;
   border: 3px solid black;
   padding: 5px
 }
 
 .title {
-  font-size: 3rem;
+  font-size: 2rem;
+  font-style: strong;
 }
 
 .score {
@@ -31,10 +32,17 @@ body {
   max-width: 500px;
 }
 
-.square {
+.empty {
   display: flex;
   background-color: black;
   border: solid 1px #fff;
+  width: 25px;
+  height: 25px;
+}
+
+.snake {
+  background-color: red;
+  border: solid 1px black;
   width: 25px;
   height: 25px;
 }
