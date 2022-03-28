@@ -4,11 +4,11 @@ import { useState, useEffect, useCallback } from 'react';
 const rows = 20
 const cols = 20
 
-const Header = (props) => {
+const Header = ({ length }) => {
     return (
       <div className="header-container">
         <div className='title'>SNAKE</div>
-        <div className='score'>Score: </div>
+        <div className='score'>Score: {length}</div>
       </div>
     )
 }
@@ -16,7 +16,7 @@ const Header = (props) => {
 function App() {
   const createBoard = () => [...Array(cols)].map((_) => [...Array(rows)].map((_) => "empty"));
 
-  const [snakePosition, setSnakePosition] = useState([[11, 11], [11, 12],])
+  const [snakePosition, setSnakePosition] = useState([getRandomArr(), getRandomArr(),])
   const [food, setFoodPosition] = useState([getRandomArr()])
   const [direction, setDirection] = useState('LEFT')
   const [grid, setGrid] = useState(createBoard())
@@ -43,22 +43,19 @@ function App() {
       event = event || window.Event
         switch (event.key) {
           case 'ArrowLeft':
-            console.log('left pressed')
             setDirection('LEFT')
             break;
           case 'ArrowRight':
-            console.log('right pressed')
             setDirection('RIGHT')
             break;
           case 'ArrowUp':
-            console.log('up pressed')
             setDirection('UP')
             break;
           case 'ArrowDown':
-            console.log('down pressed')
             setDirection('DOWN')
             break;
           default:
+            // Would love to add a stop direction
             setDirection('RIGHT')
             break;
         }
@@ -99,14 +96,12 @@ function App() {
       }
 
         let eatenFood = false;
+        
         if (grid[x][y] === "food") {
           eatenFood = true;
           setFoodPosition([getRandomArr()])
         }
-        
-        // let body = snake.slice(0,
-        //    snake.length - (eatenFood ? 0 : 1)
-        //    );
+    
         snake.push(newHead)
         eatenFood ? console.log('food eaten') : snake.shift()
         setSnakePosition([...snake])  
@@ -136,7 +131,7 @@ function App() {
   return (
     <div>
       <div className="box">
-        <Header></Header>
+        <Header length={snakePosition.length}></Header>
       </div>
       <div className='container'>
         {squares()}
