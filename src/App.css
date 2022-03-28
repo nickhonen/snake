@@ -8,7 +8,6 @@ body {
 
 .header-container {
   display: flex;
-  background-color: yellow;
   flex-direction: row;
   align-items: center;
   justify-content: space-around;
@@ -40,9 +39,17 @@ body {
   height: 25px;
 }
 
+.food {
+  background-color: limegreen;
+  border: solid 1px #fff;
+  width: 25px;
+  height: 25px;
+}
+
 .snake {
   background-color: red;
   border: solid 1px black;
   width: 25px;
   height: 25px;
 }
+

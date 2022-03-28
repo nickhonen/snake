@@ -14,25 +14,28 @@ const Header = (props) => {
 }
 
 function App() {
-
   const createBoard = () => [...Array(cols)].map((_) => [...Array(rows)].map((_) => "empty"));
 
-
-  function getRandomInt(max) {
-    let min = 0;
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
-  }
-  
   const [snakePosition, setSnakePosition] = useState([[11, 11], [11, 12],])
-  const [direction, setDirection] = useState([0, 0])
+  const [food, setFoodPosition] = useState([getRandomArr()])
+  const [direction, setDirection] = useState('LEFT')
   const [grid, setGrid] = useState(createBoard())
+  // maybe add state for head if code gets too wet
   
+  function getRandomArr() {
+    let min = 0;
+    let max = 20;
+    max = Math.floor(max);
+    min = Math.ceil(min);
+     //The maximum is exclusive and the minimum is inclusive
+    let x = Math.floor(Math.random() * (max - min) + min)
+    let y = Math.floor(Math.random() * (max - min) + min)
+    return [x, y];
+  }
+
   useEffect(() => {
     changeGridTypes()
-    setTimeout(() => moveSnake(snakePosition), 1500)
-    console.log(snakePosition)
-    console.log(direction)
+    setTimeout(() => moveSnake(snakePosition), 100)
   }, [snakePosition])
 
   useEffect(() => {
@@ -41,22 +44,22 @@ function App() {
         switch (event.key) {
           case 'ArrowLeft':
             console.log('left pressed')
-            setDirection([0, -1])
+            setDirection('LEFT')
             break;
           case 'ArrowRight':
             console.log('right pressed')
-            setDirection([0, 1])
+            setDirection('RIGHT')
             break;
           case 'ArrowUp':
             console.log('up pressed')
-            setDirection([-1, 0])
+            setDirection('UP')
             break;
           case 'ArrowDown':
             console.log('down pressed')
-            setDirection([1, 0])
+            setDirection('DOWN')
             break;
-          default: 
-            setDirection([1, 0])
+          default:
+            setDirection('RIGHT')
             break;
         }
       }
@@ -67,46 +70,66 @@ function App() {
     }
   }, [direction, setDirection]);
 
-  const changeGridTypes = () => {
-    let newGrid = createBoard();
-    snakePosition.forEach(([x, y]) => newGrid[x][y] = "snake")
-    setGrid(newGrid)
-  }
-
   const moveSnake = useCallback(
     (snakePosition) => {
-      let [dx, dy] = direction
       let snake = [...snakePosition]
       let newHead = snake[snake.length - 1]
+      let [x, y] = [...newHead]
 
       switch (direction) {
         // left
-        case ([0, -1]):
-          newHead = [newHead[0] - 1, newHead[1]]
-          console.log('moveSnake left')
-          break;
-        // right
-        case [0, 1]:
-          newHead = [newHead[0] + 1, newHead[1]]
-          console.log('moveSnake right')
-          break;
-        // up
-        case [-1, 0]:
+        case 'LEFT':
           newHead = [newHead[0], newHead[1] - 1]
           break;
-        // down
-        case [1, 0]:
+        // right
+        case 'RIGHT':
           newHead = [newHead[0], newHead[1] + 1]
+          break;
+        // up
+        case 'UP':
+          newHead = [newHead[0] - 1, newHead[1]]
+          break;
+        // down
+        case 'DOWN':
+          newHead = [newHead[0] + 1, newHead[1]]
           break;
         default:
-          console.log('moveSnake default')
-          newHead = [newHead[0], newHead[1] + 1]
+          newHead = [newHead[0] + 1, newHead[1]]
           break;
       }
+
+        let eatenFood = false;
+        if (grid[x][y] === "food") {
+          eatenFood = true;
+          setFoodPosition([getRandomArr()])
+        }
+        
+        // let body = snake.slice(0,
+        //    snake.length - (eatenFood ? 0 : 1)
+        //    );
         snake.push(newHead)
-        snake.shift()
-        setSnakePosition(snake)  
-    }, [direction])
+        eatenFood ? console.log('food eaten') : snake.shift()
+        setSnakePosition([...snake])  
+    }, [direction, grid])
+
+
+  const changeGridTypes = () => {
+    let newGrid = createBoard();
+    snakePosition.forEach(([x, y]) => newGrid[x][y] = "snake")
+    food.forEach(([x, y]) => newGrid[x][y] = "food")
+    setGrid(newGrid)
+  }
+
+  // const handleFoodEating = () => {
+  //   let head = snakePosition[snakePosition.length - 1]
+  //   let [x, y] = [...head]
+  //   if (grid[x][y] === "food") {
+  //     setFoodPosition([getRandomArr()])
+  //     return true;
+  //   } else {
+  //     return false;
+  //   }
+  // }
 
   const squares = () => grid.map((x, i) => x.map((value, j) => <div key={`${i}${j}`} className={value}></div>));
 
