@@ -24,6 +24,12 @@ body {
   font-size: 1rem;
 }
 
+.game-over {
+  text-align: center;
+  color: red;
+  font-style: strong;
+}
+
 .container {
   display: grid;
   grid-template-columns: 25px repeat(auto-fill, 25px);

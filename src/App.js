@@ -4,7 +4,16 @@ import { useState, useEffect, useCallback } from 'react';
 const rows = 20
 const cols = 20
 
-const Header = ({ length }) => {
+const Header = ({ length, restart }) => {
+    // if (state === "loss") {
+    //   return (
+    //     <div className='header-container'>
+    //       <div className='game-over'>You lost. Click here to restart.</div>
+    //       <button onClick={restart}>Try again</button>
+    //     </div>
+    //   )
+    // }
+
     return (
       <div className="header-container">
         <div className='title'>SNAKE</div>
@@ -16,10 +25,11 @@ const Header = ({ length }) => {
 function App() {
   const createBoard = () => [...Array(cols)].map((_) => [...Array(rows)].map((_) => "empty"));
 
-  const [snakePosition, setSnakePosition] = useState([getRandomArr(), getRandomArr(),])
+  const [snakePosition, setSnakePosition] = useState([[5, 5], [5, 6],])
   const [food, setFoodPosition] = useState([getRandomArr()])
-  const [direction, setDirection] = useState('LEFT')
+  const [direction, setDirection] = useState('DOWN')
   const [grid, setGrid] = useState(createBoard())
+  const [loss, setLossState] = useState(false)
   // maybe add state for head if code gets too wet
   
   function getRandomArr() {
@@ -35,7 +45,8 @@ function App() {
 
   useEffect(() => {
     changeGridTypes()
-    setTimeout(() => moveSnake(snakePosition), 100)
+    checkLossCondition()
+    setTimeout(() => moveSnake(snakePosition), 500)
   }, [snakePosition])
 
   useEffect(() => {
@@ -69,9 +80,9 @@ function App() {
 
   const moveSnake = useCallback(
     (snakePosition) => {
-      let snake = [...snakePosition]
-      let newHead = snake[snake.length - 1]
-      let [x, y] = [...newHead]
+      let snake = snakePosition
+      let newHead = snakePosition[snakePosition.length - 1]
+      let [x, y] = newHead
 
       switch (direction) {
         // left
@@ -115,6 +126,28 @@ function App() {
     setGrid(newGrid)
   }
 
+  const checkLossCondition = () => {
+    let snake = [...snakePosition]
+    let head = snakePosition[snakePosition.length - 1]
+    let [headX, headY] = head
+    // prob something wrong with one of these
+    const outOfBounds = (x) => x >= 200 || x < 0
+    const collision = (arr) => headX === arr[0] && headY === arr[1]
+
+    if (outOfBounds(headX) || outOfBounds(headY)) {
+      setLossState(true)
+    }
+    if (snake.forEach(s => collision(s))) {
+      setLossState(true)
+    }
+  }
+
+  const restartGame = () => {
+    // prob need to redo func for this
+    window.location.reload(false)
+  }
+
+
   // const handleFoodEating = () => {
   //   let head = snakePosition[snakePosition.length - 1]
   //   let [x, y] = [...head]
@@ -128,15 +161,24 @@ function App() {
 
   const squares = () => grid.map((x, i) => x.map((value, j) => <div key={`${i}${j}`} className={value}></div>));
 
+  if (loss === true) {
+    return (
+      <div className='header-container'>
+        <div className='game-over'>You lost. Click here to restart.</div>
+        <button onClick={restartGame}>Try again</button>
+      </div>
+    )
+  }
+
   return (
     <div>
       <div className="box">
-        <Header length={snakePosition.length}></Header>
+        <Header length={snakePosition.length} restart={restartGame}></Header>
       </div>
       <div className='container'>
         {squares()}
       </div>
-      <button className='start-game' >Start</button>
+      <button className='pause-game' >Pause</button>
     </div>
 
   );
