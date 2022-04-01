@@ -33,14 +33,13 @@ function App() {
   const [direction, setDirection] = useState('RIGHT')
   const [grid, setGrid] = useState(createBoard())
   const [lossState, setLossState] = useState(false)
-  const [speed, setSpeed] = useState(220)
-  // const [snakeHead, setSnakeHead] = useState([snakePosition[snakePosition.length - 1]])
-  // maybe add state for head if code gets too wet
+  const [speed, setSpeed] = useState(200)
+ 
   useEffect(() => {
     handleFoodEating()
     checkCollision()
     changeGridTypes(grid)
-    setTimeout(() => moveSnake(snakePosition), 200)
+    setTimeout(() => moveSnake(snakePosition), speed)
   }, [snakePosition])
 
   useEffect(() => {
@@ -82,10 +81,6 @@ function App() {
     let y = Math.floor(Math.random() * (max - min) + min)
     return [x, y];
   }
-
-
-
-  
 
   const moveSnake = useCallback( 
     (snakePosition) => {
@@ -164,26 +159,13 @@ function App() {
     if (grid[x][y] === "food") {
       setFoodPosition([getRandomArr()])
       setFoodEaten(true)
+      setSpeed(Math.min(speed - 20), 60)
     } else {
       setFoodEaten(false)
     }
   }
 
-  const gameOver = () => {
-    setSnakePosition([[5, 5], [5, 6]])
-    setDirection('STOP')
-    setFoodPosition(getRandomArr())
-    setGrid(createBoard())
-    return (
-      <div className='header-container'>
-        <div className='game-over'>You lost. Click here to restart.</div>
-        <button onClick={restartGame}>Try again</button>
-      </div>
-    )
-  }
-
   const restartGame = () => {
-    // prob need to redo func for this
     window.location.reload(false)
   }
 
