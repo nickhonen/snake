@@ -22,13 +22,12 @@ function App() {
   const [foodEaten, setFoodEaten] = useState(false)
   const [direction, setDirection] = useState('DOWN')
   const [grid, setGrid] = useState(createBoard())
-  const [loss, setLossState] = useState(false)
   // const [snakeHead, setSnakeHead] = useState([snakePosition[snakePosition.length - 1]])
   // maybe add state for head if code gets too wet
   
   function getRandomArr() {
     let min = 0;
-    let max = 20;
+    let max = 19;
     max = Math.floor(max);
     min = Math.ceil(min);
      //The maximum is exclusive and the minimum is inclusive
@@ -39,15 +38,11 @@ function App() {
 
   useEffect(() => {
     handleFoodEating()
-    setInterval(() => checkLossCondition(), 20)
-    setTimeout(() => changeGridTypes(grid), 100)
+    checkOutOfBounds()
+    changeGridTypes(grid)
     setTimeout(() => moveSnake(snakePosition), 150)
     console.log(snakePosition)
   }, [snakePosition])
-
-  useEffect(() => {
-    
-  }, [grid, snakePosition])
 
   useEffect(() => {
     const changeDirections = (event) => {
@@ -101,19 +96,19 @@ function App() {
         case 'DOWN':
           newHead = [newHead[0] + 1, newHead[1]]
           break;
+        case 'STOP':
+          newHead = [newHead[0], newHead[1]]
+          break;
         default:
           newHead = [newHead[0] + 1, newHead[1]]
           break;
       }
         let eatenFood = foodEaten
+
         snake.push(newHead)
         eatenFood ? console.log('food eaten') : snake.shift()
         setSnakePosition([...snake])  
     }, [direction, grid])
- 
-      
-
-
 
   const changeGridTypes = useCallback(
     (grid) => {
@@ -121,23 +116,27 @@ function App() {
       snakePosition.forEach(([x, y]) => newGrid[x][y] = "snake")
       food.forEach(([x, y]) => newGrid[x][y] = "food")
       setGrid(newGrid)
-    }, [snakePosition, food]
+    }, [snakePosition]
   )
 
-  const checkLossCondition = () => {
-    let snake = [...snakePosition]
-    let head = snakePosition[snakePosition.length - 1]
+  const checkOutOfBounds = (head = snakePosition[snakePosition.length - 1]) => {
     let [headX, headY] = head
     // prob something wrong with one of these
-    const outOfBounds = (x) => x > 19 || x < 0
-    const collision = (arr) => headX === arr[0] && headY === arr[1]
 
-    if (outOfBounds(headX) || outOfBounds(headY)) {
-      setLossState(true)
+    if (headX >= 20 || headX < 0 || headY >= 20 || headY < 0) {
+      gameOver()
     }
-    if (snake.forEach(s => collision(s))) {
-      setLossState(true)
-    }
+  }
+  const checkCollision = () => {
+    let snake = [...snakePosition]
+    let head = snake[snake.length - 1]
+    let [headX, headY] = head
+    snake.pop()
+    snake.forEach((pos) => {
+      if (headX === pos[0] && head[1] === pos[1]) {
+        gameOver()
+      }
+    })
   }
 
   const handleFoodEating = () => {
@@ -151,14 +150,10 @@ function App() {
     }
   }
 
-  const restartGame = () => {
-    // prob need to redo func for this
-    window.location.reload(false)
-  }
-
-  const squares = () => grid.map((x, i) => x.map((value, j) => <div key={`${i}${j}`} className={value}></div>));
-
-  if (loss === true) {
+  const gameOver = () => {
+    setSnakePosition([[5, 5], [5, 6]])
+    setDirection('STOP')
+    setFoodPosition(getRandomArr())
     return (
       <div className='header-container'>
         <div className='game-over'>You lost. Click here to restart.</div>
@@ -167,17 +162,18 @@ function App() {
     )
   }
 
+  const restartGame = () => {
+    // prob need to redo func for this
+    window.location.reload(false)
+  }
 
-  if (loss === true) {
-    return (
-    <div>
-      <h1>You lost.</h1>
-      <h3>Try again?</h3>
-    </div>
-    )
-  } else {
+  const squares = () => grid.map((x, i) => x.map((value, j) => <div key={`${i}${j}`} className={value}></div>));
+
+
     return (
       <div>
+        <Header length={snakePosition.length}>
+        </Header>
           <div className='container'>
             {squares()}
           </div>
@@ -185,6 +181,5 @@ function App() {
       </div>
     )
   }
-}
 
 export default App;
