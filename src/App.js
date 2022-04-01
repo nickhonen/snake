@@ -29,14 +29,13 @@ function App() {
 
   const [snakePosition, setSnakePosition] = useState([[5, 5],])
   const [food, setFoodPosition] = useState([getRandomArr()])
-  const [foodEaten, setFoodEaten] = useState(false)
+  // const [foodEaten, setFoodEaten] = useState(false)
   const [direction, setDirection] = useState('RIGHT')
   const [grid, setGrid] = useState(createBoard())
   const [lossState, setLossState] = useState(false)
   const [speed, setSpeed] = useState(200)
  
   useEffect(() => {
-    handleFoodEating()
     checkCollision()
     changeGridTypes(grid)
     setTimeout(() => moveSnake(snakePosition), speed)
@@ -86,6 +85,7 @@ function App() {
     (snakePosition) => {
       let snake = snakePosition
       let newHead = snake[snake.length - 1]
+    
 
       switch (direction) {
         // left
@@ -111,19 +111,27 @@ function App() {
           newHead = [newHead[0] + 1, newHead[1]]
           break;
       }
+      
 
       if (checkOutOfBounds(newHead)) {
         setLossState(true)
         return;
       } 
+
     snake.push(newHead)
-    let eatenFood = foodEaten
-    eatenFood ? console.log('food eaten') : snake.shift()
+    
+    let foodEaten = false
+      if (handleFoodEating(newHead)) {
+        foodEaten = true
+        setFoodPosition([getRandomArr()])
+        setSpeed(speed - 10)
+      }
+    foodEaten ? console.log('food eaten') : snake.shift()
  
 
       
     setSnakePosition([...snake])  
-    }, [direction, grid, foodEaten]
+    }, [direction, grid]
   )
 
   const changeGridTypes = useCallback(
@@ -153,16 +161,12 @@ function App() {
     }
   }
 
-  const handleFoodEating = () => {
-    let head = snakePosition[snakePosition.length - 1]
-    let [x, y] = head
+  const handleFoodEating = (head) => {
+    let x = head[0]
+    let y = head[1]
     if (grid[x][y] === "food") {
-      setFoodPosition([getRandomArr()])
-      setFoodEaten(true)
-      setSpeed(Math.min(speed - 20), 60)
-    } else {
-      setFoodEaten(false)
-    }
+      return true;
+    } 
   }
 
   const restartGame = () => {
