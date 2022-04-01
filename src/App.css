@@ -34,6 +34,7 @@ body {
   display: grid;
   grid-template-columns: 25px repeat(auto-fill, 25px);
   place-items: center;
+  justify-content: center;
   max-width: 500px;
 }
 
@@ -45,6 +46,13 @@ body {
   height: 25px;
 }
 
+.snake {
+  background-color: red;
+  border: solid 1px black;
+  width: 25px;
+  height: 25px;
+}
+
 .food {
   background-color: limegreen;
   border: solid 1px #fff;
@@ -52,10 +60,4 @@ body {
   height: 25px;
 }
 
-.snake {
-  background-color: red;
-  border: solid 1px black;
-  width: 25px;
-  height: 25px;
-}
 
