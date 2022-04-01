@@ -5,6 +5,14 @@ const rows = 20
 const cols = 20
 
 const Header = ({ length }) => {
+  // if (state === "loss") {
+  //     return (
+  //       <div className='header-container'>
+  //         <div className='game-over'>You lost. Click here to restart.</div>
+  //         <button onClick={restart}>Try again</button>
+  //       </div>
+  //     )
+  //   }
 
     return (
       <div className="header-container">
@@ -12,6 +20,16 @@ const Header = ({ length }) => {
         <div className='score'>Score: {length}</div>
       </div>
     )
+}
+
+const LossScreen = (props) => {
+  return (
+    <div>
+      <h1>You lost. Your score was: {props.score}</h1>
+      <h3>Try again?</h3>
+      <button onClick={props.handleRestart}>Restart</button>
+    </div>
+  )
 }
 
 function App() {
@@ -22,6 +40,7 @@ function App() {
   const [foodEaten, setFoodEaten] = useState(false)
   const [direction, setDirection] = useState('DOWN')
   const [grid, setGrid] = useState(createBoard())
+  const [lossState, setLossState] = useState(false)
   // const [snakeHead, setSnakeHead] = useState([snakePosition[snakePosition.length - 1]])
   // maybe add state for head if code gets too wet
   
@@ -38,7 +57,6 @@ function App() {
 
   useEffect(() => {
     handleFoodEating()
-    checkOutOfBounds()
     changeGridTypes(grid)
     setTimeout(() => moveSnake(snakePosition), 150)
     console.log(snakePosition)
@@ -76,7 +94,7 @@ function App() {
   const moveSnake = useCallback( 
     (snakePosition) => {
       let snake = snakePosition
-      let newHead = snakePosition[snakePosition.length - 1]
+      let newHead = snake[snake.length - 1]
       let [x, y] = newHead
 
       switch (direction) {
@@ -103,12 +121,18 @@ function App() {
           newHead = [newHead[0] + 1, newHead[1]]
           break;
       }
-        let eatenFood = foodEaten
+      
+      let eatenFood = foodEaten
 
-        snake.push(newHead)
-        eatenFood ? console.log('food eaten') : snake.shift()
-        setSnakePosition([...snake])  
-    }, [direction, grid])
+      if (checkCollision() || checkOutOfBounds(newHead)) {
+          setLossState(true)
+          return;
+      } 
+
+      snake.push(newHead)
+      eatenFood ? console.log('food eaten') : snake.shift()
+      setSnakePosition([...snake])  
+    }, [direction, grid, foodEaten])
 
   const changeGridTypes = useCallback(
     (grid) => {
@@ -119,22 +143,21 @@ function App() {
     }, [snakePosition]
   )
 
-  const checkOutOfBounds = (head = snakePosition[snakePosition.length - 1]) => {
-    let [headX, headY] = head
+  const checkOutOfBounds = (head) => {
     // prob something wrong with one of these
-
-    if (headX >= 20 || headX < 0 || headY >= 20 || headY < 0) {
-      gameOver()
-    }
+    return (head[0] >= 20 || head[0] < 0 || head[1] >= 20 || head[1] < 0)
   }
+    
   const checkCollision = () => {
     let snake = [...snakePosition]
     let head = snake[snake.length - 1]
     let [headX, headY] = head
     snake.pop()
     snake.forEach((pos) => {
-      if (headX === pos[0] && head[1] === pos[1]) {
-        gameOver()
+      if (headX === pos[0] && headY === pos[1]) {
+        return true;
+      } else {
+        return false;
       }
     })
   }
@@ -154,6 +177,7 @@ function App() {
     setSnakePosition([[5, 5], [5, 6]])
     setDirection('STOP')
     setFoodPosition(getRandomArr())
+    setGrid(createBoard())
     return (
       <div className='header-container'>
         <div className='game-over'>You lost. Click here to restart.</div>
@@ -169,15 +193,15 @@ function App() {
 
   const squares = () => grid.map((x, i) => x.map((value, j) => <div key={`${i}${j}`} className={value}></div>));
 
-
+if (lossState === true) {
+  return <LossScreen handleRestart={restartGame} score={snakePosition.length}></LossScreen>
+}
     return (
       <div>
-        <Header length={snakePosition.length}>
-        </Header>
+        <Header length={snakePosition.length} />
           <div className='container'>
             {squares()}
           </div>
-        <button className='pause-game' >Pause</button>
       </div>
     )
   }
