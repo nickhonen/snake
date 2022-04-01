@@ -29,11 +29,10 @@ function App() {
 
   const [snakePosition, setSnakePosition] = useState([[5, 5],])
   const [food, setFoodPosition] = useState([getRandomArr()])
-  // const [foodEaten, setFoodEaten] = useState(false)
   const [direction, setDirection] = useState('RIGHT')
   const [grid, setGrid] = useState(createBoard())
   const [lossState, setLossState] = useState(false)
-  const [speed, setSpeed] = useState(200)
+  const [speed, setSpeed] = useState(250)
  
   useEffect(() => {
     checkCollision()
@@ -111,21 +110,14 @@ function App() {
           newHead = [newHead[0] + 1, newHead[1]]
           break;
       }
-      
-
       if (checkOutOfBounds(newHead)) {
         setLossState(true)
         return;
       } 
 
     snake.push(newHead)
-    
-    let foodEaten = false
-      if (handleFoodEating(newHead)) {
-        foodEaten = true
-        setFoodPosition([getRandomArr()])
-        setSpeed(speed - 10)
-      }
+
+    let foodEaten = handleFoodEating(newHead)
     foodEaten ? console.log('food eaten') : snake.shift()
  
 
@@ -161,12 +153,28 @@ function App() {
     }
   }
 
+  const changeSpeed = () => {
+    let newSpeed = speed
+    if (newSpeed > 200) {
+      return newSpeed - 20
+    }
+    else if (newSpeed <= 200 && newSpeed > 110)  {
+      return newSpeed - 10
+    }
+    else {
+      return Math.min((newSpeed - 5), 50)
+    }  
+  }
+
   const handleFoodEating = (head) => {
     let x = head[0]
     let y = head[1]
     if (grid[x][y] === "food") {
-      return true;
-    } 
+        setFoodPosition([getRandomArr()])
+        setSpeed(changeSpeed())
+        return true;
+    }
+    return false;
   }
 
   const restartGame = () => {
