@@ -8,8 +8,8 @@ const Header = ({ length }) => {
 
     return (
       <div className="header-container">
-        <div className='title'>SNAKE</div>
         <div className='controls'>Use arrow keys to move</div>
+        <div className='title'>Snake</div>
         <div className='score'>Score: {length}</div>
       </div>
     )
@@ -86,7 +86,6 @@ function App() {
       let snake = snakePosition
       let newHead = snake[snake.length - 1]
     
-
       switch (direction) {
         // left
         case 'LEFT':
@@ -121,8 +120,6 @@ function App() {
     let foodEaten = handleFoodEating(newHead)
     foodEaten ? console.log('food eaten') : snake.shift()
  
-
-      
     setSnakePosition([...snake])  
     }, [direction, grid]
   )

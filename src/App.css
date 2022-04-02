@@ -5,21 +5,27 @@ body {
   margin: 0;
 }
 
-
 .header-container {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-around;
-  padding: 5px
+  padding: 2px
 }
 
 .title {
+  font-style: helvetica;
   font-size: 2rem;
   font-style: strong;
 }
 
 .score {
+  font-style: helvetica;
+  font-size: 1rem;
+}
+
+.controls {
+  font-style: helvetica;
   font-size: 1rem;
 }
 
