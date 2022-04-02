@@ -9,6 +9,7 @@ const Header = ({ length }) => {
     return (
       <div className="header-container">
         <div className='title'>SNAKE</div>
+        <div className='controls'>Use arrow keys to move</div>
         <div className='score'>Score: {length}</div>
       </div>
     )
@@ -32,7 +33,7 @@ function App() {
   const [direction, setDirection] = useState('RIGHT')
   const [grid, setGrid] = useState(createBoard())
   const [lossState, setLossState] = useState(false)
-  const [speed, setSpeed] = useState(250)
+  const [speed, setSpeed] = useState(230)
  
   useEffect(() => {
     checkCollision()
@@ -162,7 +163,7 @@ function App() {
       return newSpeed - 10
     }
     else {
-      return Math.min((newSpeed - 5), 50)
+      return Math.max((newSpeed - 5), 50)
     }  
   }
 
