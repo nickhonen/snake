@@ -11,7 +11,6 @@ body {
   flex-direction: row;
   align-items: center;
   justify-content: space-around;
-  border: 3px solid black;
   padding: 5px
 }
 
